@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const subItemSchema = new mongoose.Schema({
   numberOfPart: Number,
@@ -6,7 +6,7 @@ const subItemSchema = new mongoose.Schema({
   partName: String,
   orderQuantity: Number, // Adding Order Quantity here based on requirements
   dispatchDate: String, // Or Date
-  projectId: { type: mongoose.Schema.Types.ObjectId, ref: 'Project' }
+  projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
 });
 
-module.exports = mongoose.model('SubItem', subItemSchema);
+export default mongoose.model("SubItem", subItemSchema);

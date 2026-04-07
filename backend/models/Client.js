@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const clientSchema = new mongoose.Schema({
   id: String,
@@ -7,4 +7,4 @@ const clientSchema = new mongoose.Schema({
   clientEmail: String,
 });
 
-module.exports = mongoose.model('Client', clientSchema);
+export default mongoose.model("Client", clientSchema);

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
   projectId: String,
@@ -6,8 +6,8 @@ const projectSchema = new mongoose.Schema({
   numberOfItems: Number, // Initially specified expected parts count
   description: String,
   totalItems: Number, // Current total items quantity sum
-  clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client' },
-  status: { type: String, enum: ['current', 'completed'], default: 'current' }
+  clientId: { type: mongoose.Schema.Types.ObjectId, ref: "Client" },
+  status: { type: String, enum: ["current", "completed"], default: "current" },
 });
 
-module.exports = mongoose.model('Project', projectSchema);
+export default mongoose.model("Project", projectSchema);

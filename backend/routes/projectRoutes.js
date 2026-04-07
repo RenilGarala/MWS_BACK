@@ -1,13 +1,21 @@
-const express = require('express');
-const router = express.Router();
-const projectController = require('../controllers/projectController');
+import { Router } from "express";
+import {
+  createProject,
+  addParts,
+  completeProject,
+  getCompletedProjects,
+  getCurrentProjects,
+  getPartSuggestions,
+  getProjects,
+} from "../controllers/projectController.js";
 
-router.get('/suggestions', projectController.getPartSuggestions);
-router.post('/', projectController.createProject);
-router.get('/', projectController.getProjects);
-router.get('/current', projectController.getCurrentProjects);
-router.get('/completed', projectController.getCompletedProjects);
-router.post('/:id/parts', projectController.addParts);
-router.post('/:id/complete', projectController.completeProject);
+const router = Router();
+router.get("/suggestions", getPartSuggestions);
+router.post("/", createProject);
+router.get("/", getProjects);
+router.get("/current", getCurrentProjects);
+router.get("/completed", getCompletedProjects);
+router.post("/:id/parts", addParts);
+router.post("/:id/complete", completeProject);
 
-module.exports = router;
+export default router;
