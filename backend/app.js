@@ -7,7 +7,7 @@ export const app = express();
 app.use(cors());
 
 app.use(express.json());
-import projectRoutes from "./routes/projectRoute.js";
+import projectRoutes from "./routes/projectRoutes.js";
 
 app.use("/api/v1", projectRoutes);
 
