@@ -1,7 +1,7 @@
 import Project from "../models/Project.js";
 import SubItem from "../models/SubItem.js";
 
-export const createProject = async (req, res) => {
+export const createProject = async (req, res, next) => {
   try {
     const { projectId, projectName, numberOfItems, description } = req.body;
     const project = new Project({
@@ -20,7 +20,7 @@ export const createProject = async (req, res) => {
   }
 };
 
-export const addParts = async (req, res) => {
+export const addParts = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { parts } = req.body;
@@ -30,11 +30,7 @@ export const addParts = async (req, res) => {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    if (parts.length > project.numberOfItems) {
-      return res.status(400).json({
-        error: `Cannot add more than ${project.numberOfItems} parts.`,
-      });
-    }
+
 
     let totalQuantity = 0;
     const savedParts = [];
@@ -61,7 +57,7 @@ export const addParts = async (req, res) => {
   }
 };
 
-export const getProjects = async (req, res) => {
+export const getProjects = async (req, res, next) => {
   try {
     const projects = await Project.find();
     res.status(200).json(projects);
@@ -71,7 +67,7 @@ export const getProjects = async (req, res) => {
   }
 };
 
-export const getCurrentProjects = async (req, res) => {
+export const getCurrentProjects = async (req, res, next) => {
   try {
     const projects = await Project.find({ status: "current" });
     res.status(200).json(projects);
@@ -81,7 +77,7 @@ export const getCurrentProjects = async (req, res) => {
   }
 };
 
-export const getCompletedProjects = async (req, res) => {
+export const getCompletedProjects = async (req, res, next) => {
   try {
     const projects = await Project.find({ status: "completed" });
     res.status(200).json(projects);
@@ -91,7 +87,7 @@ export const getCompletedProjects = async (req, res) => {
   }
 };
 
-export const completeProject = async (req, res) => {
+export const completeProject = async (req, res, next) => {
   try {
     const { id } = req.params;
     const project = await Project.findByIdAndUpdate(
@@ -107,7 +103,7 @@ export const completeProject = async (req, res) => {
 };
 
 // Route to get all unique parts logic for Autocomplete / Suggestions
-export const getPartSuggestions = async (req, res) => {
+export const getPartSuggestions = async (req, res, next) => {
   try {
     const { query } = req.query;
     if (!query) return res.status(200).json([]);
