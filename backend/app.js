@@ -5,8 +5,15 @@ import "dotenv/config";
 export const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5175",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: function (origin, callback) {
+    // Allow any localhost origin (like 5173, 5174, 5175, etc.) or no origin
+    if (!origin || /^http:\/\/localhost:\d+$/.test(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS policy'))
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 };
 

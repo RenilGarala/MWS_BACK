@@ -30,8 +30,6 @@ export const addParts = async (req, res, next) => {
       return res.status(404).json({ error: "Project not found" });
     }
 
-
-
     let totalQuantity = 0;
     const savedParts = [];
 
@@ -69,7 +67,10 @@ export const getProjects = async (req, res, next) => {
 
 export const getCurrentProjects = async (req, res, next) => {
   try {
-    const projects = await Project.find({ status: "current" });
+    const projects = await Project.aggregate([
+      { $match: { status: { $not: { $regex: /^(completed|done)$/i } } } },
+      { $lookup: { from: "subitems", localField: "_id", foreignField: "projectId", as: "parts" } }
+    ]);
     res.status(200).json(projects);
   } catch (error) {
     console.log("Error fetching current projects:", error);
@@ -79,7 +80,10 @@ export const getCurrentProjects = async (req, res, next) => {
 
 export const getCompletedProjects = async (req, res, next) => {
   try {
-    const projects = await Project.find({ status: "completed" });
+    const projects = await Project.aggregate([
+      { $match: { status: { $regex: /^(completed|done)$/i } } },
+      { $lookup: { from: "subitems", localField: "_id", foreignField: "projectId", as: "parts" } }
+    ]);
     res.status(200).json(projects);
   } catch (error) {
     console.log("Error fetching completed projects:", error);
@@ -125,6 +129,43 @@ export const getPartSuggestions = async (req, res, next) => {
     res.status(200).json(Object.values(uniqueMap));
   } catch (error) {
     console.log("Error fetching part suggestions:", error);
+    next(error);
+  }
+};
+
+export const updateProject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const project = await Project.findByIdAndUpdate(id, updateData, { new: true });
+    res.status(200).json(project);
+  } catch (error) {
+    console.log("Error updating project:", error);
+    next(error);
+  }
+};
+
+export const updatePart = async (req, res, next) => {
+  try {
+    const { partId } = req.params;
+    const updateData = req.body;
+    const part = await SubItem.findByIdAndUpdate(partId, updateData, { new: true });
+    
+    if (part && part.projectId) {
+      const allParts = await SubItem.find({ projectId: part.projectId });
+      // Only set to DONE if there is at least 1 part and every single part is DONE
+      const allDone = allParts.length > 0 && allParts.every(p => p.status === 'DONE');
+      
+      if (allDone) {
+        await Project.findByIdAndUpdate(part.projectId, { status: "DONE" });
+      } else {
+        await Project.findByIdAndUpdate(part.projectId, { status: "PLANNED" });
+      }
+    }
+
+    res.status(200).json(part);
+  } catch (error) {
+    console.log("Error updating part:", error);
     next(error);
   }
 };

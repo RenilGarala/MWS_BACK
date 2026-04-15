@@ -5,13 +5,16 @@ export interface Project {
   description: string
   numberOfItems: number
   totalItems?: number
-  status?: 'current' | 'completed'
+  status?: string
+  parts?: Part[]
 }
 
 export interface Part {
+  _id?: string
   partCode: string
   partName: string
   orderQuantity: string | number
   dispatchDate: string
   numberOfPart?: number
+  status?: string
 }
